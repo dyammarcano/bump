@@ -56,9 +56,9 @@ func init() {
 	rootCmd.Flags().StringVarP(&options.Metadata, "metadata", "m", "", "adds metadata to the version per semver spec")
 }
 
-func bumper(c *cobra.Command, args []string) {
+func bumper(cmd *cobra.Command, args []string) {
 	arg := "patch"
-	// fmt.Println("ARGS:", c.Args())
+	// fmt.Println("ARGS:", cmd.Args())
 	if len(args) < 1 {
 		// log.Fatal("Invalid arg")
 	} else {
@@ -86,7 +86,7 @@ func bumper(c *cobra.Command, args []string) {
 				err = fmt.Errorf("%v not found. Use either --filename or --input to change where to look for version", filename)
 			}
 
-			c.Println(err)
+			cmd.Println(err)
 		}
 	}
 
@@ -98,7 +98,7 @@ func bumper(c *cobra.Command, args []string) {
 
 	if options.Part != "" {
 		bumpOptions.Part = options.Part
-		c.Println("part is set", bumpOptions.Part)
+		cmd.Println("part is set", bumpOptions.Part)
 	} else {
 		bumpOptions.Part = arg
 	}
@@ -115,25 +115,25 @@ func bumper(c *cobra.Command, args []string) {
 	}
 
 	if err != nil {
-		c.Println(err)
+		cmd.Println(err)
 	}
 
 	if options.Extract {
-		printCommand(c, oldContent)
+		printCommand(cmd, oldContent)
 		return
 	}
 
-	c.Println("Old version:", oldContent)
-	c.Println("New version:", newContent)
+	cmd.Println("Old version:", oldContent)
+	cmd.Println("New version:", newContent)
 
 	if options.Input == "" {
 		err = os.WriteFile(filename, newcontent, 0644)
 		if err != nil {
-			c.Println(err)
+			cmd.Println(err)
 		}
 	}
 
-	printCommand(c, newContent) // write it to stdout so scripts can use it
+	printCommand(cmd, newContent) // write it to stdout so scripts can use it
 }
 
 func printCommand(c *cobra.Command, version string) {

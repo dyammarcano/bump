@@ -18,9 +18,9 @@ type Info struct {
 
 func init() {
 	i = &Info{
-		Version:    "v1.3.6",
-		CommitHash: "8e7308b6de2db7cbd57f4f646394cfab9c2d6cba",
-		Date:       "2024-04-05T17:02:44Z",
+		Version:    "v0.0.0",
+		CommitHash: "13b7b7631a97904d5c2661139bf4fb8bf6aac410",
+		Date:       "2024-04-08T15:59:02Z",
 		Features:   []string{},
 	}
 }

@@ -11,6 +11,73 @@ const (
 	semverMatcher = `(\d+\.){1}(\d+\.){1}(\*|\d+)`
 )
 
+type (
+	Options struct {
+		Replace    string
+		Part       string
+		Index      int
+		PreRelease string
+		Metadata   string
+	}
+
+	Bump struct {
+		Old, New string
+		Loc      []int
+		NewBytes []byte
+	}
+)
+
+func NewBump(v string, part string) *Bump {
+	s := semver.New(v)
+	switch part {
+	case "major":
+		s.BumpMajor()
+	case "minor":
+		s.BumpMinor()
+	default:
+		s.BumpPatch()
+	}
+
+	return &Bump{
+		Old: v,
+		New: s.String(),
+	}
+}
+
+func (b *Bump) String() string {
+	return b.New
+}
+
+func (b *Bump) Replace(v string) {
+	b.Old = v
+	b.New = v
+}
+
+func (b *Bump) Bump(part string) {
+	s := semver.New(b.Old)
+	switch part {
+	case "major":
+		s.BumpMajor()
+	case "minor":
+		s.BumpMinor()
+	default:
+		s.BumpPatch()
+	}
+	b.New = s.String()
+}
+
+//func (b *Bump) ReplaceInContent(vbytes []byte) (newcontents []byte, err error) {
+//	return replace(vbytes, b.New, "", 0)
+//}
+//
+//func (b *Bump) BumpInContent(vbytes []byte) (newcontents []byte, err error) {
+//	return replace(vbytes, "", "", 0)
+//}
+
+func (b *Bump) Tag() error {
+	return nil
+}
+
 // BumpInContent takes finds the first semver string in the content, bumps it, then returns the same content with the new version
 func BumpInContent(vbytes []byte, part string, index int) (old, new string, loc []int, newcontents []byte, err error) {
 	return replace(vbytes, "", part, index)
@@ -36,14 +103,6 @@ func BumpString(input string, options *Options) (string, error) {
 	}
 	fmt.Println(oldC, newC, loc, n2)
 	return newC, nil
-}
-
-type Options struct {
-	Replace    string
-	Part       string
-	Index      int
-	PreRelease string
-	Metadata   string
 }
 
 // if index is set, it will find all matches and choose the one at the given index, -1 means last
